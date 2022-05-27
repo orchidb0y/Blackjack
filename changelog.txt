@@ -1,3 +1,8 @@
 v0.1 Multiplayer functionality.
 v0.2 Players can check the value of their hands and get new cards. If their hand exceeds 21, they go bust.
 v0.3 Code tracks blackjack and 21 hands. Removed unnecessary functions.
+v0.4 Code overhaul
+v0.5 todo:
+
+Add code to automatically chose value of Ace depending on total value of other cards:
+    e.g. self.total + 11 > 21 then ace = 1

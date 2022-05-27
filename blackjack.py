@@ -35,13 +35,12 @@
 
 # FOR NOW, THE GAME WILL ONLY DEAL WITH SIMPLE RULES, NOT ACCOUNTING FOR RULE VARIATIONS
 # Each player will start with $100 in their pocket
-# No splitting for now
+# No splitting
 
 import random
 import time
 import os
 import sys
-from tracemalloc import start
 
 
 class Dealer:
@@ -49,9 +48,12 @@ class Dealer:
     deck = []
     deck_and_values = {}
     hand = []
+    hidden_card = ''
     total = 0
     blackjack = False
     has_21 = False
+    one_ace = False
+    two_ace = False
 
     def __init__(self):
         values = [[1, 11], 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
@@ -65,15 +67,16 @@ class Dealer:
 
     def deal_player(self, person):
         print('Dealing for {name}:\n'.format(name = person.name))
-        time.sleep(1)
+        time.sleep(0.5)
         dealing1 = dealer.deck.pop()
         if self.deck_and_values[dealing1] == [1, 11]:
             person.one_ace = True
         person.hand.append(dealing1)
         print(dealing1)
-        time.sleep(1)
+        time.sleep(0.5)
         dealing2 = dealer.deck.pop()
         if self.deck_and_values[dealing2] == [1, 11] and person.one_ace == True:
+            person.one_ace = False
             person.two_ace = True
         elif self.deck_and_values[dealing2] == [1, 11] and person.one_ace == False:
             person.one_ace = True
@@ -93,12 +96,26 @@ class Dealer:
     def deal_house(self, number_of_players, list_of_players):
         print('\nNow dealing for the house:')
         print()
-        time.sleep(1)
+        time.sleep(0.5)
         dealing = dealer.deck.pop()
+        if self.deck_and_values[dealing] == [1, 11]:
+            self.one_ace = True
+        else:
+            self.total += self.deck_and_values[dealing]
         dealer.hand.append(dealing)
         print(dealing)
-        time.sleep(1)
-        dealer.hand.append(dealer.deck.pop())
+        time.sleep(0.5)
+        dealing = dealer.deck.pop()
+        if self.deck_and_values[dealing] == [1, 11] and self.one_ace == False:
+            self.one_ace = True
+        elif self.deck_and_values[dealing] == [1, 11] and self.one_ace == True:
+            self.one_ace = False
+            self.two_ace = True
+        else:
+            self.total += self.deck_and_values[dealing]
+        if self.one_ace == True and self.total == 10:
+            self.blackjack = True
+        self.hidden_card = dealing
         print('Hidden card')
         time.sleep(1)
         number_of_players = len(list_of_players)
@@ -106,6 +123,32 @@ class Dealer:
 
     def hit(self):
         pass
+
+    def dealers_turn(self, number_of_players, list_of_players):
+        players_totals = [player.total for player in list_of_players]
+        print('\nNow it\'s the dealer\'s turn.')
+        time.sleep(1)
+        print(f'\nThe hidden card is {self.hidden_card}')
+        self.hand.append(self.hidden_card)
+        time.sleep(1)
+        # Displays house's hand value, accounting for aces
+        if self.blackjack == True:
+            print('The dealer has a blackjack!')
+        elif self.one_ace == True:
+            print(f'The hand totals {self.total + 1} or {self.total + 11} points.')
+        elif self.two_ace == True:
+            print('The hand totals 2 points.')
+        else:
+            print(f'The hand totals {self.total} points.')
+        for player in list_of_players:
+            i = list_of_players.index(player)
+            if self.blackjack == True and (player.blackjack == True or player.has_21 == True):
+                print(f'It\'s a tie between the house and {player.name}!')
+            elif self.blackjack and player.total < 21:
+                player.lost = True
+                print(f'{player.name} lost to the house.')
+        time.sleep(1)
+        # STOPPED HERE
 
 
 class Player:
@@ -115,46 +158,157 @@ class Player:
         self.name = name
         self.id = Player.player_count
         self.hand = []
+        self.aces = []
         self.bet = 0
         self.wallet = 100
         self.total = 0
-        self.has_21 = False
         self.blackjack = False
         self.one_ace = False
         self.two_ace = False
+        self.three_ace = False
+        self.four_ace = False
+        self.tie = False
+        self.has_21 = False
+        self.lost = False
 
     def place_bet(self, bet):
         self.bet = bet
         self.pocket -= bet
 
     def hit(self):
-        card = dealer.deck.pop()
-        self.hand.append(card)
         self.total = 0
-        if dealer.deck_and_values[card] == [1, 11]:
-            self.hand.pop()
-            for value in self.hand:
-                self.total += value
-                print(f'Your hand has a total value of {self.total + 1} or {self.total + 11}.')
-            self.hand.append(card)
+        # Draw card and check if its an Ace
+        deal = dealer.deck.pop()
+        if self.one_ace == True:
+            for card in self.hand:
+                if dealer.deck_and_values[card] == [1, 11]:
+                    i = self.hand.index(card)
+                    self.aces.append(self.hand[i])
+            for card in self.hand:
+                self.total += dealer.deck_and_values[card]
+            for ace in range(len(self.aces)):
+                self.hand.append(self.aces.pop())
+            self.hand.append(deal)
+            time.sleep(0.5)
+            print(f'\nYou got a {deal}.')
+            time.sleep(0.5)
+            if dealer.deck_and_values[deal] == [1, 11]:
+                self.one_ace = False
+                self.two_ace = True
+            else:
+                self.total += dealer.deck_and_values[deal]
+        elif self.two_ace == True:
+            for card in self.hand:
+                if dealer.deck_and_values[card] == [1, 11]:
+                    i = self.hand.index(card)
+                    self.aces.append(self.hand[i])
+            for card in self.hand:
+                self.total += dealer.deck_and_values[card]
+            for ace in range(len(self.aces)):
+                self.hand.append(self.aces.pop())
+            self.hand.append(deal)
+            time.sleep(0.5)
+            print(f'\nYou got a {deal}.')
+            time.sleep(0.5)
+            if dealer.deck_and_values[deal] == [1, 11]:
+                self.two_ace = False
+                self.three_ace = True
+            else:
+                self.total += dealer.deck_and_values[deal]
+        elif self.three_ace == True:
+            for card in self.hand:
+                if dealer.deck_and_values[card] == [1, 11]:
+                    i = self.hand.index(card)
+                    self.aces.append(self.hand[i])
+            for card in self.hand:
+                self.total += dealer.deck_and_values[card]
+            for ace in range(len(self.aces)):
+                self.hand.append(self.aces.pop())
+            self.hand.append(deal)
+            time.sleep(0.5)
+            print(f'\nYou got a {deal}.')
+            time.sleep(0.5)
+            if dealer.deck_and_values[deal] == [1, 11]:
+                self.three_ace = False
+                self.four_ace = True
+            else:
+                self.total += dealer.deck_and_values[deal]
+        elif self.four_ace == True:
+            for card in self.hand:
+                if dealer.deck_and_values[card] == [1, 11]:
+                    i = self.hand.index(card)
+                    self.aces.append(self.hand[i])
+            for card in self.hand:
+                self.total += dealer.deck_and_values[card]
+            for ace in range(len(self.aces)):
+                self.hand.append(self.aces.pop())
+            self.hand.append(deal)
+            time.sleep(0.5)
+            print(f'\nYou got a {deal}.')
+            time.sleep(0.5)
+            self.total += dealer.deck_and_values[deal]
         else:
             for card in self.hand:
-                self.total += int(dealer.deck_and_values[card])
-        print(f'\nYou got a {card}')
-        time.sleep(1)
-        if self.total < 21:
-            print(f'Your hand totals {self.total} points.')
-            time.sleep(1)
-            take_turn(self)
-        elif self.total == 21:
-            self.has_21 = True
-            print('You have 21 points!\nYou\'ll receive your payout when all players have taken their turns.')
-            time.sleep(1)
+                self.total += dealer.deck_and_values[card]
+            self.hand.append(deal)
+            time.sleep(0.5)
+            print(f'You got a {deal}')
+            time.sleep(0.5)
+            if dealer.deck_and_values[deal] == [1, 11]:
+                self.one_ace = True
+            else:
+                self.total += dealer.deck_and_values[deal]
+        if self.one_ace == True:
+            if( self.total + 1) > 21:
+                print('You\'re bust!')
+                self.lost = True
+            elif (self.total + 1) == 21:
+                print('You have 21 points!')
+                self.has_21 = True
+            elif (self.total + 1) < 21:
+                print(f'You have {self.total + 1} points.')
+                take_turn(self)
+        elif self.two_ace == True:
+            if (self.total + 2) > 21:
+                print('You\'re bust!')
+                self.lost = True
+            elif (self.total + 2) == 21:
+                print('You have 21 points!')
+                self.has_21 = True
+            elif (self.total + 2) < 21:
+                print(f'You have {self.total + 2} points.')
+                take_turn(self)
+        elif self.three_ace == True:
+            if (self.total + 3) > 21:
+                print('You\'re bust!')
+                self.lost = True
+            elif (self.total + 3) == 21:
+                print('You have 21 points!')
+                self.has_21 = True
+            elif (self.total + 3) < 21:
+                print(f'You have {self.total + 3} points.')
+                take_turn(self)
+        elif self.four_ace == True:
+            if (self.total + 4) > 21:
+                print('You\'re bust!')
+                self.lost = True
+            elif (self.total + 4) == 21:
+                print('You have 21 points!')
+                self.has_21 = True
+            elif (self.total + 4) < 21:
+                print(f'You have {self.total + 4} points.')
+                take_turn(self)
         else:
-            print('You\'re bust!')
-            time.sleep(1)
-            print('The table will take the money you bet when all players have taken their turns.')
-            time.sleep(1)
+            if self.total > 21:
+                print('You\'re bust!')
+                self.lost = True
+            elif self.total == 21:
+                print('You have 21 points!')
+                self.has_21 = True
+            elif self.total < 21:
+                print(f'You have {self.total} points.')
+                take_turn(self)
+
 
     def double_down(self):
         pass
@@ -169,8 +323,10 @@ class Player:
         pass
 
     def check_hand(self):
+        time.sleep(1)
         print('\nYou have these cards in hand:\n')
         for card in self.hand:
+            time.sleep(0.5)
             print(card)
         self.total = 0
         for card in self.hand:
@@ -179,13 +335,17 @@ class Player:
                 self.hand.pop(i)
                 for card in self.hand:
                     self.total += int(dealer.deck_and_values[card])
-                print(f'Your hand has a total value of {self.total + 1} or {self.total + 11}.')
+                time.sleep(0.5)
+                print(f'Your hand has a value of {self.total + 1} or {self.total + 11}.')
+                time.sleep(1)
                 self.hand.append(card)
                 take_turn(self)
             else:
                 self.total += int(dealer.deck_and_values[card])
         if self.one_ace == False or self.two_ace == False:
-            print(f'\nYour hand has a total value of {self.total}')
+            time.sleep(0.5)
+            print(f'\nYour hand has a value of {self.total}')
+            time.sleep(1)
             take_turn(self)
         # debug
         # for card in self.hand:
@@ -194,19 +354,9 @@ class Player:
 
 
     def check_house_hand(self):
-        print('\nThe house has these cards in hand:\n')
-        for card in dealer.hand:
-            print(card)
-        for card in dealer.hand:
-            if dealer.deck_and_values[card] == [1, 11]:
-                i = dealer.hand.index(card)
-                dealer.hand.pop(i)
-                for card in dealer.hand:
-                    dealer.total += int(dealer.deck_and_values[card])
-                print(f'The dealer\'s hand has a total value of {dealer.total + 1} or {dealer.total + 11}.')
-                dealer.hand.append(card)
-            else:
-                dealer.total += int(dealer.deck_and_values[card])
+        time.sleep(0.5)
+        print(f'\nThe house has a {dealer.hand[0]}:\n')
+        time.sleep(1)
         take_turn(self)
 
 
@@ -221,10 +371,9 @@ def make_player(name):
 
 
 def take_turn(person):
-    print('''
-    What does {name} want to do? (1-8)
-
-    1) Hit
+    print(f'\nWhat does {person.name} want to do? (1-8)\n')
+    time.sleep(1)
+    print('''    1) Hit
     2) Stay
     3) Double down (not implemented)
     4) Split (not implemented)
@@ -232,11 +381,12 @@ def take_turn(person):
     6) Check your hand
     7) Check the house\'s hand (not implemented)
     8) Quit the game
-    '''.format(name = person.name))
+    ''')
     opt = input()
     if opt == '1':
         person.hit()
     elif opt == '2':
+        time.sleep(1)
         pass
     elif opt == '3':
         person.double_down()
@@ -261,8 +411,7 @@ def players_turn(number_of_players, list_of_players):
             take_turn(player)
             number_of_players -= 1
     if number_of_players == 0:
-        time.sleep(1)
-        dealers_turn()
+        dealer.dealers_turn(number_of_players, list_of_players)
 
 def start_game(number_of_players):
     os.system('cls')
@@ -296,14 +445,14 @@ def deal_players(number_of_players, list_of_players):
 def first_turn(number_of_players, list_of_players):
     time.sleep(1)
     print('\nNow that the cards are dealt, it\'s time for the players to take their turns and make their first decision.')
-    time.sleep(3)
+    time.sleep(2)
     if dealer.deck_and_values[dealer.deck[0]] == [1, 11]:
         print('\nThe dealer is showing an Ace! Each player must decide if they want to insure their hands against a Blackjack.')
         # NOT IMPLEMENTED
     players_turn(number_of_players, list_of_players)
 
-def dealers_turn():
-    print('dealer')
+def end_turn(number_of_players, list_of_players):
+    pass
 
 number_of_players = 0
 dealer = Dealer()
