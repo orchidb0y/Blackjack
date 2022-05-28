@@ -11,12 +11,22 @@ If player got a blackjack his turn is skipped
 Bets implemented into the game
 The first turn
 Staying now appropriately calculate the player's points and saves it before passing the turn
+First turn is completely implemented
+
+v0.6:
+
+Check_hand function bugging out if the player has two aces at the start of the turn should be fixed
+If one player leaves the game it will not end anymore
+If all players leave the game, it ends
+The game now runs indefinitely until all players are broke or all players leave the game
+The dealer can now tell the correct value of any hand
+Winning the round even if you're busted if the dealer busts is now fixed
 
 Known issues:
-1. The dealer can't tell the correct value of a player's hand if they have one ace
-2. The dealer can't tell the correct value of their hand if they have one ace
-3. If one player quits the game, the whole game ends
+
+If the hidden card is an ace, total points calculation bugs out
+The game only asks for bets in the first turn
 
 Planned update for next version:
-1. The game should be able to run for indefinite turns until all players have left the game or all players have lost all their money
-2. The dealer should be able to tell the correct value of a hand if either them or the player has an ace
+1. Doubling down
+2. Surrendering

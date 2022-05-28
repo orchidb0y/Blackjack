@@ -35,7 +35,8 @@
 
 # FOR NOW, THE GAME WILL ONLY DEAL WITH SIMPLE RULES, NOT ACCOUNTING FOR RULE VARIATIONS
 # Each player will start with $100 in their pocket
-# No splitting
+# No splitting for now
+# No insurance for now
 
 import random
 import time
@@ -211,103 +212,102 @@ class Dealer:
             if (self.total + 1) > 21:
                 print('The dealer is bust!')
                 self.lost = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 1) == 21:
                 print('The dealer has 21 points!')
                 self.has_21 = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 1) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 1} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
         elif self.two_ace == True:
             if (self.total + 2) > 21:
                 print('The dealer is bust!')
                 self.lost = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 2) == 21:
                 print('The dealer has 21 points!')
                 self.has_21 = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 2) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 2} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
         elif self.three_ace == True:
             if (self.total + 3) > 21:
                 print('The dealer is bust!')
                 self.lost = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 3) == 21:
                 print('The dealer has 21 points!')
                 self.has_21 = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 3) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 3} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
         elif self.four_ace == True:
             if (self.total + 4) > 21:
                 print('The dealer is bust!')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
                 self.lost = True
             elif (self.total + 4) == 21:
                 print('The dealer has 21 points!')
                 self.has_21 = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif (self.total + 4) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 4} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
         else:
             if self.total > 21:
                 print('The dealer is bust!')
                 self.lost = True
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif self.total == 21:
                 print('The dealer has 21 points!')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
                 self.has_21 = True
             elif self.total < 21 and self.total < goal:
                 print(f'The dealer has {self.total} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
 
     def dealers_turn(self, number_of_players, list_of_players):
         players_totals = [player.total for player in list_of_players]
-        try:
-            players_totals.remove(21)
-        except:
-            pass
         goal = max(players_totals)
         busted_players = 0
         print(f'\nNow it\'s the dealer\'s turn. They will try to reach {goal} points or more.')
         time.sleep(1)
         print(f'\nThe hidden card is {self.hidden_card}')
         self.hand.append(self.hidden_card)
+        self.hidden_card = ''
         time.sleep(1)
         for player in list_of_players:
             if player.lost == True:
                 busted_players += 1
         if busted_players == len(list_of_players):
-            print('Everyone is busted. Moving to the next round!')
-            self.end_of_turn(number_of_players, list_of_players)
+            print('Everyone is busted!')
+            time.sleep(1)
+            self.end_of_turn(list_of_players)
         else:
             if self.blackjack == True:
                 print('The dealer has a blackjack!')
-                self.end_of_turn(number_of_players, list_of_players)
+                self.end_of_turn(list_of_players)
             elif self.one_ace == True:
-                print(f'The hand totals {self.total + 1} or {self.total + 11} points.')
+                self.total += 11
+                print(f'The hand totals {self.total} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.two_ace == True:
                 print('The hand totals 2 points.')
@@ -321,24 +321,28 @@ class Dealer:
             self.hit(number_of_players, list_of_players, goal)
             time.sleep(0.5)
         elif self.total >= goal:
-            self.end_of_turn(number_of_players, list_of_players)
+            self.end_of_turn(list_of_players)
         elif self.lost == True:
-            self.end_of_turn(number_of_players, list_of_players)
+            self.end_of_turn(list_of_players)
   
-    def end_of_turn(self, number_of_players, list_of_players):
+    def end_of_turn(self, list_of_players):
         if self.lost == False:
             for person in list_of_players:
                 if person.blackjack == True and self.blackjack == True:
-                    print('It\'s a push!')
+                    print(f'\nIt\'s a push between {person.name} and the dealer!')
                     person.wallet += person.bet
                     person.bet = 0
+                    time.sleep(0.5)
                 elif person.blackjack == True and self.blackjack == False:
-                    print(f'{person.name} has a blackjack! Adding ${person.bet * (3/2)} to their wallet.')
+                    print(f'\n{person.name} has a blackjack! Adding ${person.bet * (3/2)} to their wallet.')
                     self.house -= (person.bet * (3/2))
                     person.wallet += (person.bet * (3/2))
                     person.bet = 0
+                    time.sleep(0.5)
+                    print(f'They now have ${person.wallet} in their wallet.')
+                    time.sleep(0.5)
                 elif person.total > self.total and person.total <= 21:
-                    print(f'{person.name} won over the dealer!')
+                    print(f'\n{person.name} won over the dealer!')
                     time.sleep(0.5)
                     print('They got 2:1 over their bet. Adding ${person.bet * 2} to their wallet.')
                     self.house -= person.bet
@@ -348,12 +352,12 @@ class Dealer:
                     print(f'They now have ${person.wallet} in their wallet.')
                     time.sleep(0.5)
                 elif person.total == self.total:
-                    print(f'It\'s a tie between {person.name} and the dealer!')
+                    print(f'\nIt\'s a tie between {person.name} and the dealer!')
                     person.wallet += person.bet
                     person.bet = 0
                     time.sleep(0.5)
                 elif person.total < self.total or person.total > 21:
-                    print(f'{person.name} lost to the dealer!')
+                    print(f'\n{person.name} lost to the dealer!')
                     time.sleep(0.5)
                     print('Their money goes to the house.')
                     self.house += person.bet
@@ -363,16 +367,26 @@ class Dealer:
                     time.sleep(0.5)
         elif self.lost == True:
             for person in list_of_players:
-                print(f'{person.name} won over the dealer!')
-                time.sleep(0.5)
-                print('They got 2:1 over their bet. Adding ${person.bet * 2} to their wallet.')
-                self.house -= person.bet
-                person.wallet += 2 * person.bet
-                person.bet = 0
-                time.sleep(0.5)
-                print(f'They now have ${person.wallet} in their wallet.')
-                time.sleep(0.5)
-        end_turn(number_of_players, list_of_players)
+                if person.lost == False:
+                    print(f'\n{person.name} won over the dealer!')
+                    time.sleep(0.5)
+                    print('They got 2:1 over their bet. Adding ${person.bet * 2} to their wallet.')
+                    self.house -= person.bet
+                    person.wallet += 2 * person.bet
+                    person.bet = 0
+                    time.sleep(0.5)
+                    print(f'They now have ${person.wallet} in their wallet.')
+                    time.sleep(0.5)
+                if person.lost == True:
+                    print(f'\n{person.name} lost to the dealer!')
+                    time.sleep(0.5)
+                    print('Their money goes to the house.')
+                    person.bet = 0
+                    time.sleep(0.5)
+                    print(f'They now have ${person.wallet} in their wallet.')
+                    time.sleep(0.5)
+                    
+        end_turn(list_of_players)
 
 
 class Player:
@@ -591,8 +605,9 @@ class Player:
             if dealer.deck_and_values[card] == [1, 11]:
                 i = self.hand.index(card)
                 self.aces.append(self.hand.pop(i))
-        for card in self.hand:
-            self.total += dealer.deck_and_values[card]
+        if self.hand != []:
+            for card in self.hand:
+                self.total += dealer.deck_and_values[card]
         for ace in range(len(self.aces)):
             self.hand.append(self.aces.pop())
         time.sleep(0.5)
@@ -630,7 +645,7 @@ def make_player(name):
 
 
 def take_turn(person):
-    print(f'\nWhat does {person.name} want to do? (1-8)\n')
+    print(f'\nWhat does {person.name} want to do? (1-10)\n')
     time.sleep(1)
     print('''    1) Hit
     2) Stay
@@ -640,7 +655,8 @@ def take_turn(person):
     6) Check your hand
     7) Check the house\'s hand
     8) Check your bet
-    9) Quit the game
+    9) Check your wallet
+    10) Quit the game
     ''')
     opt = input()
     if opt == '1':
@@ -660,11 +676,24 @@ def take_turn(person):
     elif opt == '8':
         time.sleep(0.5)
         print(f'\nYou bet ${person.bet} and have ${person.wallet} left in your wallet.')
+        time.sleep(0.5)
         take_turn(person)
     elif opt == '9':
+        time.sleep(0.5)
+        print(f'\nYou have ${person.wallet} in your wallet.')
+        time.sleep(0.5)
+        take_turn(person)
+    elif opt == '10':
+        time.sleep(0.5)
+        person.wallet += person.bet
+        print(f'\n{person.name} chose to leave the game with ${person.wallet} in their wallet.')
+        remove_player(person)
+        time.sleep(0.5)
+    elif opt == 'quit':
         sys.exit()
     else:
-        print('I\'m sorry, I didn\'t get that.')
+        print('\nI\'m sorry, I didn\'t get that.')
+        time.sleep(0.5)
         take_turn(person)
 
 
@@ -720,9 +749,55 @@ def players_turn(number_of_players, list_of_players):
     if number_of_players == 0:
         dealer.dealers_turn(number_of_players, list_of_players)
 
-def end_turn(number_of_players, list_of_players):
-    print('End of turn!')
-    pass
+def end_turn(list_of_players):
+    number_of_players = len(list_of_players)
+    print('\nEnd of turn!')
+    time.sleep(1)
+    for person in list_of_players:
+        if person.wallet == 0:
+            print(f'\n{person.name} is broke! They\'re out of the game.')
+            time.sleep(0.5)
+            list_of_players.remove(person)
+    print('Returning all cards to the deck and reshuffling.')
+    for person in list_of_players:
+        for card in person.hand:
+            dealer.deck.append(card)
+            person.hand.remove(card)
+    for card in dealer.hand:
+        dealer.deck.append(card)
+        dealer.hand.remove(card)
+    random.shuffle(dealer.deck)
+    for person in list_of_players:
+        person.total = 0
+        person.blackjack = False
+        person.one_ace = False
+        person.two_ace = False
+        person.three_ace = False
+        person.four_ace = False
+        person.tie = False
+        person.has_21 = False
+        person.lost = False
+    dealer.total = 0
+    dealer.blackjack = False
+    dealer.has_21 = False
+    dealer.one_ace = False
+    dealer.two_ace = False
+    dealer.three_ace = False
+    dealer.four_ace = False
+    dealer.lost = False
+    time.sleep(0.5)
+    print('\nThe next turn starts now. The dealer will deal the cards.\n')
+    time.sleep(2)
+    deal_players(number_of_players, list_of_players)
+
+def remove_player(person):
+    global list_of_players
+    list_of_players.remove(person)
+    if list_of_players == []:
+        print('All players have left the game.')
+        sys.exit()
+    return list_of_players
+
 
 number_of_players = 0
 dealer = Dealer()
