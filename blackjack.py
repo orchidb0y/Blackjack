@@ -237,7 +237,7 @@ class Dealer:
                 self.end_of_turn(list_of_players)
             elif (self.total + 2) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 2} points.')
-                self.total += 2
+                self.total += 12
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
@@ -253,7 +253,7 @@ class Dealer:
                 self.end_of_turn(list_of_players)
             elif (self.total + 3) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 3} points.')
-                self.total += 3
+                self.total += 13
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
@@ -269,7 +269,7 @@ class Dealer:
                 self.end_of_turn(list_of_players)
             elif (self.total + 4) < 21 and self.total < goal:
                 print(f'The dealer has {self.total + 4} points.')
-                self.total += 4
+                self.total += 14
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.total >= goal:
                 print(f'The dealer has {self.total} points.')
@@ -318,7 +318,8 @@ class Dealer:
                 print(f'The hand totals {self.total} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             elif self.two_ace == True:
-                print('The hand totals 2 points.')
+                self.total += 12
+                print('The hand totals {self.total} points.')
                 self.take_turn(number_of_players, list_of_players, goal)
             else:
                 print(f'The hand totals {self.total} points.')
@@ -517,7 +518,8 @@ class Player:
                     i = self.hand.index(card)
                     self.aces.append(self.hand.pop(i))
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -535,7 +537,8 @@ class Player:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -553,7 +556,8 @@ class Player:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -571,7 +575,8 @@ class Player:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -668,7 +673,8 @@ class Player:
                 i = self.hand.index(card)
                 self.aces.append(self.hand.pop(i))
         for card in self.hand:
-            self.total += dealer.deck_and_values[card]
+            if self.hand != []:
+                self.total += dealer.deck_and_values[card]
         for ace in range(len(self.aces)):
             self.hand.append(self.aces.pop())
         if self.one_ace == True:

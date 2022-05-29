@@ -39,6 +39,10 @@ v0.9.1
 
 Improved welcome screen
 
+v0.9.2
+
+Minor bugfix
+
 Known issues:
 
 
