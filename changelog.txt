@@ -35,6 +35,10 @@ Surrendering is implemented
 Insuring is implemented
 Bugfix for point calculation bugging out when dealer only has aces in their hand and draws a new card
 
+v0.9.1
+
+Improved welcome screen
+
 Known issues:
 
 

@@ -872,7 +872,6 @@ def take_turn(person):
 
 
 def start_game(number_of_players):
-    os.system('cls')
     print('Welcome to Standard Blackjack. Each player starts with $100 in their wallets. The payout for a blackjack is 3:2. The payout for a successful insurance is 2:1.')
     time.sleep(3)
     number_of_players = int(input('How many players are we dealing with? (1-3) '))
@@ -988,6 +987,23 @@ def remove_player(person):
     return list_of_players
 
 
+os.system('cls')
 number_of_players = 0
 dealer = Dealer()
+print('''
+#######    #              #       ##########  #     #    ##########       #       ##########  #     #
+#      #   #             # #      #           #    #              #      # #      #           #    #
+#       #  #             # #      #           #   #               #      # #      #           #   #
+#       #  #            #   #     #           #  #                #     #   #     #           #  #
+#      #   #            #   #     #           # #                 #     #   #     #           # #
+#     #    #           #     #    #           ##                  #    #     #    #           ##
+#      #   #           #######    #           ##                  #    #######    #           ##
+#       #  #          #       #   #           # #         #       #   #       #   #           # #
+#       #  #          #       #   #           #  #        #       #   #       #   #           #  #
+#      #   #         #         #  #           #   #       #       #  #         #  #           #   #
+#######    ########  #         #  ##########  #    #      #########  #         #  ##########  #    #
+ 
+ ----------------------------------------------------------------------------------------------------
+ 
+ ''')
 start_game(number_of_players)
