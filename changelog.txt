@@ -29,11 +29,16 @@ Game now asks for bet before the beggining of every turn
 Statistics for players that quit the game
 Doubling down is implemented
 
+v0.9
+
+Surrendering is implemented
+Insuring is implemented
+Bugfix for point calculation bugging out when dealer only has aces in their hand and draws a new card
+
 Known issues:
 
 
 
 Planned update for next version:
 
-1. Surrendering
-2. Insurance
+1. Splitting, maybe

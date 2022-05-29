@@ -33,7 +33,6 @@
 
     # The table will flip up their facedown card, and take a card until it is close to or over 21.
 
-# FOR NOW, THE GAME WILL ONLY DEAL WITH SIMPLE RULES, NOT ACCOUNTING FOR RULE VARIATIONS
 # Each player will start with $100 in their pocket
 # No splitting
 
@@ -130,29 +129,31 @@ class Dealer:
         deal = self.deck.pop()
         if self.one_ace == True:
             for card in self.hand:
-                if dealer.deck_and_values[card] == [1, 11]:
+                if self.deck_and_values[card] == [1, 11]:
                     i = self.hand.index(card)
                     self.aces.append(self.hand.pop(i))
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
             time.sleep(0.5)
             print(f'\nThe dealer got a {deal}.')
             time.sleep(0.5)
-            if dealer.deck_and_values[deal] == [1, 11]:
+            if self.deck_and_values[deal] == [1, 11]:
                 self.one_ace = False
                 self.two_ace = True
             else:
-                self.total += dealer.deck_and_values[deal]
+                self.total += self.deck_and_values[deal]
         elif self.two_ace == True:
             for card in self.hand:
                 if dealer.deck_and_values[card] == [1, 11]:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -170,7 +171,8 @@ class Dealer:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -188,7 +190,8 @@ class Dealer:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                if self.hand != []:
+                    self.total += self.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -333,16 +336,42 @@ class Dealer:
     def end_of_turn(self, list_of_players):
         if self.lost == False:
             for person in list_of_players:
-                if person.blackjack == True and self.blackjack == True:
+                if person.surrended == True:
+                    time.sleep(0.5)
+                    print(f'\n{person.name} surrended and lost this round.')
+                    person.lose_count += 1
+                    time.sleep(0.5)
+                    print(f'They now have ${person.wallet} in their wallet.')
+                    time.sleep(0.5)
+                elif person.blackjack == False and self.blackjack == True:
+                    if person.insure == True:
+                        print(f'{person.name} was insured, earning them 2:1. Adding {person.insurance * 2} to their wallet.')
+                        self.house -= person.insurance * 2
+                        self.house += person.bet
+                        person.wallet += person.insurance * 3
+                        person.money_won_lost += person.insurance * 2
+                        person.money_won_lost -= person.bet
+                        person.bet = 0
+                        person.lose_count += 1
+                        time.sleep(0.5)
+                        print(f'They now have ${person.wallet} in their wallet.')
+                        time.sleep(0.5)
+                    else:
+                        print(f'{person.name} was not insured. They lose the turn and their bet.')
+                        self.house += person.bet
+                        person.lose_count += 1
+                        person.money_won_lost -= person.bet
+                        person.bet = 0
+                elif person.blackjack == True and self.blackjack == True:
                     print(f'\nIt\'s a push between {person.name} and the dealer!')
                     person.wallet += person.bet
                     person.bet = 0
                     person.tie_count += 1
                     time.sleep(0.5)
                 elif person.blackjack == True and self.blackjack == False:
-                    print(f'\n{person.name} has a blackjack, earning them 3:2 ! Adding ${person.bet * 1.5} to their wallet.')
+                    print(f'\n{person.name} has a blackjack, earning them 3:2 ! Adding ${person.bet * 0.5} to their wallet.')
                     self.house -= (person.bet * 1.5)
-                    person.wallet += (person.bet * 1.5)
+                    person.wallet += (person.bet * 2.5)
                     person.money_won_lost += (person.bet * 1.5)
                     person.bet = 0
                     person.win_count += 1
@@ -382,19 +411,31 @@ class Dealer:
         elif self.lost == True:
             for person in list_of_players:
                 if person.lost == False:
-                    print(f'\n{person.name} won over the dealer!')
-                    time.sleep(0.5)
-                    print(f'They got 1:1 over their bet. Adding ${person.bet} to their wallet.')
-                    self.house -= person.bet
-                    person.wallet += 2 * person.bet
-                    person.money_won_lost += person.bet
-                    person.bet = 0
-                    person.win_count = 1
-                    time.sleep(0.5)
-                    print(f'They now have ${person.wallet} in their wallet.')
-                    time.sleep(0.5)
+                    if person.blackjack == True:
+                        print(f'\n{person.name} has a blackjack, earning them 3:2 ! Adding ${person.bet * 1.5} to their wallet.')
+                        self.house -= (person.bet * 1.5)
+                        person.wallet += (person.bet * 2.5)
+                        person.money_won_lost += (person.bet * 1.5)
+                        person.bet = 0
+                        person.win_count += 1
+                        person.blackjack_count += 1
+                        time.sleep(0.5)
+                        print(f'They now have ${person.wallet} in their wallet.')
+                        time.sleep(0.5)
+                    else:
+                        print(f'\n{person.name} won over the dealer!')
+                        time.sleep(0.5)
+                        print(f'They got 1:1 over their bet. Adding ${person.bet} to their wallet.')
+                        self.house -= person.bet
+                        person.wallet += 2 * person.bet
+                        person.money_won_lost += person.bet
+                        person.bet = 0
+                        person.win_count = 1
+                        time.sleep(0.5)
+                        print(f'They now have ${person.wallet} in their wallet.')
+                        time.sleep(0.5)
                 if person.lost == True:
-                    print(f'\n{person.name} lost to the dealer!')
+                    print(f'\n{person.name} was bust, so they lose their bet anyway.')
                     time.sleep(0.5)
                     print('Their money goes to the house.')
                     dealer.house += person.bet
@@ -417,6 +458,7 @@ class Player:
         self.hand = []
         self.aces = []
         self.bet = 0
+        self.insurance = 0
         self.wallet = 100
         self.total = 0
         self.blackjack = False
@@ -433,8 +475,9 @@ class Player:
         self.tie_count = 0
         self.blackjack_count = 0
         self.money_won_lost = 0
-        self.surrender = False
         self.doubled_down = False
+        self.surrended = False
+        self.insure = False
     
     def __repr__(self):
         print(self.name, 'name')
@@ -448,8 +491,12 @@ class Player:
         print(self.lost, 'lost')
         print(self.first_choice, 'first choice')
         print(self.bet, 'bet')
+        print(self.insurance, 'insurance')
         print(self.wallet, 'wallet')
         print(self.hand, 'hand')
+        print(self.doubled_down, 'doubled down')
+        print(self.surrended, 'surrended')
+        print(self.insure, 'insurance')
         take_turn(self)
         return 'nul'
 
@@ -673,11 +720,13 @@ class Player:
     def split(self):
         pass
 
-    def surrender(self):
-        pass 
-
-    def insurance(self):
-        pass
+    def sur(self):
+        time.sleep(0.5)
+        print(f'{self.name} is surrendering, therefore they forfeit half of their bet.')
+        self.wallet += (self.bet / 2)
+        self.bet = 0
+        self.surrended = True
+        time.sleep(0.5)
 
     def check_hand(self):
         self.total = 0
@@ -737,7 +786,7 @@ def take_turn(person):
         2) Stay
         3) Double down
         4) Split (not implemented)
-        5) Surrender (not implemented)
+        5) Surrender
         6) Check your hand
         7) Check the house\'s hand
         8) Check your bet and wallet
@@ -751,9 +800,10 @@ def take_turn(person):
         elif opt == '3':
             person.double_down()
         elif opt == '4':
-            person.split()
+            print('Splitting is not implemented in the game.')
+            take_turn(person)
         elif opt == '5':
-            person.surrender()
+            person.sur()
         elif opt == '6':
             person.check_hand()
         elif opt == '7':
@@ -784,7 +834,7 @@ def take_turn(person):
     else:
         print(f'\nWhat does {person.name} want to do now? (1-6)\n')
         time.sleep(1)
-        print('''       1) Hit
+        print('''        1) Hit
         2) Stay
         3) Check your hand
         4) Check the house\'s hand
@@ -823,7 +873,7 @@ def take_turn(person):
 
 def start_game(number_of_players):
     os.system('cls')
-    print('Welcome to Standard Blackjack. Each player starts with $100 in their wallets. The payout for a blackjack is 3:2.')
+    print('Welcome to Standard Blackjack. Each player starts with $100 in their wallets. The payout for a blackjack is 3:2. The payout for a successful insurance is 2:1.')
     time.sleep(3)
     number_of_players = int(input('How many players are we dealing with? (1-3) '))
     while number_of_players == 0 or number_of_players > 3:
@@ -860,6 +910,17 @@ def first_turn(number_of_players, list_of_players):
     time.sleep(1)
     print('\nNow that the cards are dealt, it\'s time for the players to take their turns and make their first decision.')
     time.sleep(2)
+    if dealer.deck_and_values[dealer.hand[0]] == [1, 11]:
+        print('\nThe dealer is showing an Ace. Players will have to decide if they want to insure their hands against a blackjack.')
+        time.sleep(1)
+        for person in list_of_players:
+            insure = input(f'Does {person.name} want to make an insurance? (y/n)\n')
+            if insure == 'y':
+                person.insure = True
+                person.wallet -= (person.bet / 2)
+                person.insurance = (person.bet / 2) 
+                time.sleep(0.5)
+                print(f'{person.name} took an insurance of ${person.insurance} against a blackjack.')
     players_turn(number_of_players, list_of_players)
 
 def players_turn(number_of_players, list_of_players):
@@ -897,6 +958,8 @@ def end_turn(list_of_players):
         person.first_choice = True
         person.hand = []
         person.doubled_down = False
+        person.surrended = False
+        person.insure = False
     dealer.total = 0
     dealer.blackjack = False
     dealer.has_21 = False
