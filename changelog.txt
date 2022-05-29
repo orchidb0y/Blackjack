@@ -22,11 +22,18 @@ The game now runs indefinitely until all players are broke or all players leave 
 The dealer can now tell the correct value of any hand
 Winning the round even if you're busted if the dealer busts is now fixed
 
+v0.7:
+
+Game diferentiates between a player's first choice and their next choices in the round, disabling some options during when players have already taken some action
+Game now asks for bet before the beggining of every turn
+Statistics for players that quit the game
+Doubling down is implemented
+
 Known issues:
 
-If the hidden card is an ace, total points calculation bugs out
-The game only asks for bets in the first turn
+
 
 Planned update for next version:
-1. Doubling down
-2. Surrendering
+
+1. Surrendering
+2. Insurance
