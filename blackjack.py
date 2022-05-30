@@ -71,13 +71,19 @@ class Dealer:
     def deal_player(self, person):
         print('Dealing for {name}:\n'.format(name = person.name))
         time.sleep(0.5)
-        dealing1 = dealer.deck.pop()
+        if self.deck != []:
+            dealing1 = dealer.deck.pop()
+        else:
+            end_game()
         if self.deck_and_values[dealing1] == [1, 11]:
             person.one_ace = True
         person.hand.append(dealing1)
         print(dealing1)
         time.sleep(0.5)
-        dealing2 = dealer.deck.pop()
+        if self.deck != []:
+            dealing2 = dealer.deck.pop()
+        else:
+            end_game()
         if self.deck_and_values[dealing2] == [1, 11] and person.one_ace == True:
             person.one_ace = False
             person.two_ace = True
@@ -100,7 +106,10 @@ class Dealer:
         print('\nNow dealing for the house:')
         print()
         time.sleep(0.5)
-        dealing = dealer.deck.pop()
+        if self.deck != []:
+            dealing = dealer.deck.pop()
+        else:
+            end_game()
         if self.deck_and_values[dealing] == [1, 11]:
             self.one_ace = True
         else:
@@ -108,7 +117,10 @@ class Dealer:
         dealer.hand.append(dealing)
         print(dealing)
         time.sleep(0.5)
-        dealing = dealer.deck.pop()
+        if self.deck != []:
+            dealing = dealer.deck.pop()
+        else:
+            end_game()
         if self.deck_and_values[dealing] == [1, 11] and self.one_ace == False:
             self.one_ace = True
         elif self.deck_and_values[dealing] == [1, 11] and self.one_ace == True:
@@ -126,7 +138,10 @@ class Dealer:
 
     def hit(self, number_of_players, list_of_players, goal):
         self.total = 0
-        deal = self.deck.pop()
+        if self.deck != []:
+            deal = self.deck.pop()
+        else:
+            end_game()
         if self.one_ace == True:
             for card in self.hand:
                 if self.deck_and_values[card] == [1, 11]:
@@ -509,7 +524,10 @@ class Player:
 
     def hit(self):
         self.total = 0
-        deal = dealer.deck.pop()
+        if dealer.deck != []:
+            deal = dealer.deck.pop()
+        else:
+            end_game()
         if self.first_choice == True:
             self.first_choice = False
         if self.one_ace == True:
@@ -519,7 +537,7 @@ class Player:
                     self.aces.append(self.hand.pop(i))
             for card in self.hand:
                 if self.hand != []:
-                    self.total += self.deck_and_values[card]
+                    self.total += dealer.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -538,7 +556,7 @@ class Player:
                     self.aces.append(self.hand[i])
             for card in self.hand:
                 if self.hand != []:
-                    self.total += self.deck_and_values[card]
+                    self.total += dealer.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -557,7 +575,7 @@ class Player:
                     self.aces.append(self.hand[i])
             for card in self.hand:
                 if self.hand != []:
-                    self.total += self.deck_and_values[card]
+                    self.total += dealer.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -576,7 +594,7 @@ class Player:
                     self.aces.append(self.hand[i])
             for card in self.hand:
                 if self.hand != []:
-                    self.total += self.deck_and_values[card]
+                    self.total += dealer.deck_and_values[card]
             for ace in range(len(self.aces)):
                 self.hand.append(self.aces.pop())
             self.hand.append(deal)
@@ -992,6 +1010,16 @@ def remove_player(person):
         sys.exit()
     return list_of_players
 
+def end_game():
+    print('\nLooks like the 52 card deck is over. End of the game!')
+    for person in list_of_players:
+        person.wallet += person.bet
+        time.sleep(1)
+        print(f'\nDuring the game, {person.name} won {person.win_count} times, lost {person.lose_count} times, tied {person.tie_count} times and got {person.blackjack_count} blackjacks.')
+        time.sleep(0.5)
+        print(f'Their net gain/loss was ${person.money_won_lost}')
+        time.sleep(1)
+    sys.exit()
 
 os.system('cls')
 number_of_players = 0

@@ -43,6 +43,11 @@ v0.9.2
 
 Minor bugfix
 
+v0.9.3
+
+Minor bugfix
+Game ends without error if the dealer's 52 card deck reaches the end. Game displays final statistics before exiting the process.
+
 Known issues:
 
 
