@@ -725,7 +725,8 @@ class Player:
                 i = self.hand.index(card)
                 self.aces.append(self.hand.pop(i))
         for card in self.hand:
-            self.total += dealer.deck_and_values[card]
+            if self.hand != []:
+                    self.total += dealer.deck_and_values[card]
         for ace in range(len(self.aces)):
             self.hand.append(self.aces.pop())
         if self.one_ace == True:
