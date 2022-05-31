@@ -52,6 +52,10 @@ v0.9.4
 
 Minor bugfix
 
+v0.9.5
+
+Allows the player to chose how many decks to play with, allowing for a longer game
+
 Known issues:
 
 

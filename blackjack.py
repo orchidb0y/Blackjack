@@ -58,21 +58,22 @@ class Dealer:
     four_ace = False
     lost = False
 
-    def __init__(self):
+    def __init__(self, number_of_decks = 1):
         values = [[1, 11], 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
         numbers = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
         suits = [' of Clubs', ' of Diamonds', ' of Hearts', ' of Spades']
         for suit in suits:
             for number in numbers:
-                Dealer.deck.append(number + suit)
-        Dealer.deck_and_values = dict(zip(Dealer.deck, values * 4))
-        random.shuffle(Dealer.deck)
+                self.deck.append(number + suit)
+        self.deck_and_values = dict(zip(self.deck, values * 4))
+        self.deck = self.deck * number_of_decks
+        random.shuffle(self.deck)
 
     def deal_player(self, person):
         print('Dealing for {name}:\n'.format(name = person.name))
         time.sleep(0.5)
         if self.deck != []:
-            dealing1 = dealer.deck.pop()
+            dealing1 = self.deck.pop()
         else:
             end_game()
         if self.deck_and_values[dealing1] == [1, 11]:
@@ -81,7 +82,7 @@ class Dealer:
         print(dealing1)
         time.sleep(0.5)
         if self.deck != []:
-            dealing2 = dealer.deck.pop()
+            dealing2 = self.deck.pop()
         else:
             end_game()
         if self.deck_and_values[dealing2] == [1, 11] and person.one_ace == True:
@@ -107,18 +108,18 @@ class Dealer:
         print()
         time.sleep(0.5)
         if self.deck != []:
-            dealing = dealer.deck.pop()
+            dealing = self.deck.pop()
         else:
             end_game()
         if self.deck_and_values[dealing] == [1, 11]:
             self.one_ace = True
         else:
             self.total += self.deck_and_values[dealing]
-        dealer.hand.append(dealing)
+        self.hand.append(dealing)
         print(dealing)
         time.sleep(0.5)
         if self.deck != []:
-            dealing = dealer.deck.pop()
+            dealing = self.deck.pop()
         else:
             end_game()
         if self.deck_and_values[dealing] == [1, 11] and self.one_ace == False:
@@ -163,7 +164,7 @@ class Dealer:
                 self.total += self.deck_and_values[deal]
         elif self.two_ace == True:
             for card in self.hand:
-                if dealer.deck_and_values[card] == [1, 11]:
+                if self.deck_and_values[card] == [1, 11]:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
@@ -175,14 +176,14 @@ class Dealer:
             time.sleep(0.5)
             print(f'\nThe dealer got a {deal}.')
             time.sleep(0.5)
-            if dealer.deck_and_values[deal] == [1, 11]:
+            if self.deck_and_values[deal] == [1, 11]:
                 self.two_ace = False
                 self.three_ace = True
             else:
-                self.total += dealer.deck_and_values[deal]
+                self.total += self.deck_and_values[deal]
         elif self.three_ace == True:
             for card in self.hand:
-                if dealer.deck_and_values[card] == [1, 11]:
+                if self.deck_and_values[card] == [1, 11]:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
@@ -194,14 +195,14 @@ class Dealer:
             time.sleep(0.5)
             print(f'\nThe dealer got a {deal}.')
             time.sleep(0.5)
-            if dealer.deck_and_values[deal] == [1, 11]:
+            if self.deck_and_values[deal] == [1, 11]:
                 self.three_ace = False
                 self.four_ace = True
             else:
-                self.total += dealer.deck_and_values[deal]
+                self.total += self.deck_and_values[deal]
         elif self.four_ace == True:
             for card in self.hand:
-                if dealer.deck_and_values[card] == [1, 11]:
+                if self.deck_and_values[card] == [1, 11]:
                     i = self.hand.index(card)
                     self.aces.append(self.hand[i])
             for card in self.hand:
@@ -213,18 +214,18 @@ class Dealer:
             time.sleep(0.5)
             print(f'\nThe dealer got a {deal}.')
             time.sleep(0.5)
-            self.total += dealer.deck_and_values[deal]
+            self.total += self.deck_and_values[deal]
         else:
             for card in self.hand:
-                self.total += dealer.deck_and_values[card]
+                self.total += self.deck_and_values[card]
             self.hand.append(deal)
             time.sleep(0.5)
             print(f'\nThe dealer got a {deal}')
             time.sleep(0.5)
-            if dealer.deck_and_values[deal] == [1, 11]:
+            if self.deck_and_values[deal] == [1, 11]:
                 self.one_ace = True
             else:
-                self.total += dealer.deck_and_values[deal]
+                self.total += self.deck_and_values[deal]
         if self.one_ace == True:
             if (self.total + 1) > 21:
                 print('The dealer is bust!')
@@ -454,7 +455,7 @@ class Dealer:
                     print(f'\n{person.name} was bust, so they lose their bet anyway.')
                     time.sleep(0.5)
                     print('Their money goes to the house.')
-                    dealer.house += person.bet
+                    self.house += person.bet
                     person.money_won_lost -= person.bet
                     person.bet = 0
                     person.lose_count = 1
@@ -852,6 +853,8 @@ def take_turn(person):
             sys.exit()
         elif opt == 'debug':
             print(person)
+        elif opt == 'deck length':
+            print(len(dealer.deck))
         else:
             print('\nI\'m sorry, I didn\'t get that.')
             time.sleep(0.5)
@@ -894,6 +897,9 @@ def take_turn(person):
             sys.exit()
         elif opt == 'debug':
             print(person)
+        elif opt == 'deck length':
+            print(len(dealer.deck))
+            take_turn(person)
 
 
 def start_game(number_of_players):
@@ -908,12 +914,15 @@ def start_game(number_of_players):
             make_player(name)
             number_of_players -= 1
     number_of_players = len(list_of_players)
+    print()
     while number_of_players:
         for person in list_of_players:
             bet = input(f'How much does {person.name} want to bet? ')
             person.place_bet(bet)
             number_of_players -= 1
     number_of_players = len(list_of_players)
+    num_of_decks = int(input('\nHow many decks do you want to play with? The more decks, the longer the game can run. '))
+    globals()['dealer'] = Dealer(num_of_decks)
     time.sleep(1)
     print('\nAlright, we\'re ready to start. The dealer will start dealing cards to each of the players.\n')
     time.sleep(1)
@@ -968,7 +977,7 @@ def end_turn(list_of_players):
             time.sleep(0.5)
             list_of_players.remove(person)
     print('Reshuffling.')
-    random.shuffle(Dealer.deck)
+    random.shuffle(dealer.deck)
     for person in list_of_players:
         person.total = 0
         person.blackjack = False
@@ -999,7 +1008,6 @@ def end_turn(list_of_players):
     for person in list_of_players:
         bet = input(f'How much does {person.name} want to bet? ')
         person.place_bet(bet)
-        time.sleep(1)
     print()
     deal_players(number_of_players, list_of_players)
 
