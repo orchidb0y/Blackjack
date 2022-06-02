@@ -56,7 +56,7 @@ v0.9.5
 
 Allows the player to chose how many decks to play with, allowing for a longer game
 
-v1.0 (pre-release)
+v1.0
 
 Rewrote code in a modular fashion
 New class for cards, decks, hands, players and statistics
@@ -64,9 +64,11 @@ Implemented
 
 Known issues:
 
-Sometimes, Python fails to define a new object for a player or dealer's hand, so their hands end up mixing up with each other's.
-Worked out some kind of solution for the problem. However, since I'm not sure how it happenend in the first place, it could pop up again.
+1. Sometimes, Python fails to define a new object for a player or dealer's hand, so their hands end up mixing up with each other's.
+   Worked out some kind of solution for the problem. However, since I'm not sure how it happenend in the first place, it could pop up again.
 
-Planned update for the full release
+2. The game is not correctly calculating and adding money to players wallets when they win with a blackjack
 
-1. Splitting, maybe
+Planned for v1.0.1:
+
+1. Fixing reward calculation for blackjacks

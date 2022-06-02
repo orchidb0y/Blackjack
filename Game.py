@@ -64,13 +64,17 @@ By deafult, the game is be played with 5 decks of 52 cards.''')
     dealing()
 
 
-def dealing(split = False):
+def dealing(split = False, person = None, i = None):
 
-    for player in players_list:
-        for i in range(len(player.hands)):
-            player.hands[i].get_card(deck)
-            if split == False:
+    if split == False:
+        for player in players_list:
+            for i in range(len(player.hands)):
                 player.hands[i].get_card(deck)
+                player.hands[i].get_card(deck)
+
+    elif split == True:
+        person.hands[i].get_card(deck)
+        person.hands[i + 1].get_card(deck)
 
     if split == False:
         if len(dealer.hands[0].hand) == 0:
@@ -78,34 +82,55 @@ def dealing(split = False):
             dealer.hands[0].get_card(deck, hide = True)
 
     if split == True:
+        print_dealing(split = True, person = person, i = i)
+    elif split == False:
         print_dealing()
-    else:
-        print_dealing(split = False)
 
 
-def print_dealing(split = True, debug = True):
+def print_dealing(split = False, debug = True, person = None, i = None):
 
     # system('cls')
-    for player in players_list:
-        print(f'\nDealing for {player.name}.\n')
-        sleep(1)
-        for card in player.hands[0].hand:
-            print(f'{card.card}')
-            sleep(0.5)
-        if player.hands[0].blackjack == True:
-            print(f'{player.name} got a blackjack!')
+    if split == False:
 
-    print('\nDealing for the dealer.\n')
-    sleep(0.5)
-    for card in dealer.hands[0].hand:
-        if card.hidden == False:
-            sleep(0.5)
-            print(f'{card.card}')
-        if card.hidden == True:
-            sleep(0.5)
-            print('Hidden card')
+        for player in players_list:
+            print(f'\nDealing for {player.name}.\n')
+            sleep(1)
+            for card in player.hands[0].hand:
+                print(f'{card.card}')
+                sleep(0.5)
+            if player.hands[0].blackjack == True:
+                print(f'{player.name} got a blackjack!')
+
+    elif split == True:
+
+        print(f'\nDealing for {person.name}\'s new hands.')
+        sleep(1)
+        
+        print(f'\nFor hand {i + 1}:')
+        sleep(0.5)
+        print(f'{person.hands[i].hand[-1].card}')
+
+        sleep(1)
+
+        print(f'\nFor hand {i + 2}:')
+        sleep(0.5)
+        print(f'{person.hands[i + 1].hand[-1].card}')
+
+    if split == False:
+
+        print('\nDealing for the dealer.\n')
+        sleep(0.5)
+        for card in dealer.hands[0].hand:
+            if card.hidden == False:
+                sleep(0.5)
+                print(f'{card.card}')
+            if card.hidden == True:
+                sleep(0.5)
+                print('Hidden card')
 
     if debug == True:
+
+        sleep(1)
         print()
         for player in players_list:
             for hand in player.hands:
@@ -118,10 +143,15 @@ def print_dealing(split = True, debug = True):
             for card in hand.hand:
                 print(card.card)
 
-    sleep(1)
-    print('\nNow that cards are dealt, the game will begin.')
-    sleep(2)
-    first_turn()
+    if split == False:
+        sleep(1)
+        print('\nNow that cards are dealt, the game will begin.')
+        sleep(2)
+    
+    if split == False:
+        first_turn()
+    elif split == True:
+        take_turn(person)
 
 
 def print_hit(player, i, hand):
@@ -134,9 +164,9 @@ def print_hit(player, i, hand):
         description += '.'
 
     if player.hands[i].value == 21:
-        description += '\nScored 21! Moving to the next hand.'
+        description += '\nScored 21!'
 
-    sleep(1)
+    sleep(0.5)
     print(description)
     sleep(1)
 
@@ -157,7 +187,6 @@ def take_turn(player):
     for hand in player.hands:
         if hand.played == False:
             # system('cls')
-            first_choice = True
             i = player.hands.index(hand)
             print(f'\nWhat does {player.name} want to do with hand {player.hands.index(hand) + 1}?')
             sleep(0.5)
@@ -165,15 +194,13 @@ def take_turn(player):
             sleep(0.1)
             print('2) Stay')
             sleep(0.1)
-            if first_choice == True:
-                print('3) Double down (not implemented)')
+            if hand.first_choice == True:
+                print('3) Double down')
                 sleep(0.1)
                 print('4) Split (not implemented)')
                 sleep(0.1)
-                print('5) Surrender (not implemented)')
+                print('5) Surrender')
                 sleep(0.1)
-            print('q) Quit the game (not implemented)')
-            sleep(0.1)
 
             print('\nYou have the following cards in this hand:')
             for card in player.hands[i].hand:
@@ -185,6 +212,7 @@ def take_turn(player):
             if opt == '1':
 
                 hand.get_card(deck)
+                hand.first_choice = False
 
                 if hand.bust == True:
                     print_hit(player, i, hand)
@@ -206,8 +234,9 @@ def take_turn(player):
                 sleep(1)
                 # system('cls')
 
-            elif opt == '3' and first_choice == True:
+            elif opt == '3' and hand.first_choice == True:
 
+                sleep(0.5)
                 temp = hand.bet
                 player.double_down(hand)
                 print(f'\n{player.name} doubled their bet from ${temp} to ${hand.bet}.')
@@ -225,14 +254,33 @@ def take_turn(player):
                     print_hit(player, i, hand)
                     hand.played = True
 
-            elif opt == '4' and first_choice == True:
-                pass
+            elif opt == '4' and hand.first_choice == True:
+                
+                if hand.split_possible == True:
+                    sleep(0.5)
+                    print(f'\n{player.name} chose to split hand {player.hands.index(hand) + 1}. Their bet of ${hand.bet} will be mirrored onto the new hand.')
+                    sleep(1)
 
-            elif opt == '5' and first_choice == True:
-                pass
+                    player.split(hand)
+                    i = player.hands.index(hand) + 1
+                    bet = hand.bet
+                    player.place_bet(bet , i)
 
-            elif opt.lower() == 'q':
-                pass
+                    dealing(split = True, person = player, i = player.hands.index(hand))
+
+                else:
+                    sleep(0.5)
+                    print(f'\nThis can\'t be split. Only hands with two cards of the same value can be split.')
+                    sleep(1)
+
+            elif opt == '5' and hand.first_choice == True:
+                
+                player.sur(hand)
+
+                sleep(0.5)
+                print(f'{player.name} chose to surrender this hand.')
+                hand.played = True
+                sleep(1)
 
             else:
                 print('\nI\'s sorry, I didn\'t understand that. Say again?')
@@ -241,6 +289,8 @@ def take_turn(player):
 
 def dealers_turn():
 
+    sleep(1)
+    print(f'\nIt\'s the dealer\'s turn now.')
     sleep(1)
     print(f'\n{dealer.name}\'s hidden card is a {dealer.hands[0].hand[-1].card}.')
 
@@ -329,7 +379,7 @@ def end_turn(players_bust = False, players_blackjack = False, dealer_blackjack =
 
 def print_end_turn(players_bust = False, players_blackjack = False, dealer_blackjack = False):
 
-    print('End of turn. Calculating and displaying the results...\n')
+    print('\nEnd of turn. Calculating and displaying the results...\n')
     sleep(2)
 
     if players_bust == True:
@@ -354,7 +404,10 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
 
         for player in players_list:
             for hand in player.hands:
-                if hand.blackjack == True:
+                if hand.surrended == True:
+                    sleep(0.5)
+                    print(f'{player.name} chose to surrender this hand. They lose half of their original bet.')
+                elif hand.blackjack == True:
                     sleep(0.5)
                     print(f'It\'s a push between the dealer and {player.name} for their hand {player.hands.index(hand) + 1}.')
                 else:
@@ -369,10 +422,13 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
         print(f'{dealer.name} is bust!')
         for player in players_list:
             for hand in player.hands:
-                if hand.bust == False:
+                if hand.surrended == True:
+                    sleep(0.5)
+                    print(f'{player.name} chose to surrender this hand. They lose half of their original {hand.bet * 2} bet.')
+                elif hand.bust == False:
                     sleep(0.5)
                     print(f'{player.name}\'s hand {player.hands.index(hand) + 1} won ${hand.bet} over the dealer\'s hand.')
-                if hand.bust == True:
+                elif hand.bust == True:
                     sleep(0.5)
                     print(f'{player.name}\'s hand {player.hands.index(hand) + 1} is bust! They lose their ${hand.bet}.')
         
@@ -383,7 +439,10 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
 
         for player in players_list:
             for hand in player.hands:
-                if hand.blackjack == True:
+                if hand.surrended == True:
+                    sleep(0.5)
+                    print(f'{player.name} chose to surrender this hand. They lose half of their original {hand.bet * 2} bet.')
+                elif hand.blackjack == True:
                     sleep(0.5)
                     print(f'{player.name}\'s hand {player.hands.index(hand) + 1} won ${hand.bet * 1.5} over the dealer with a blackjack.')
                 elif hand.bust == True:

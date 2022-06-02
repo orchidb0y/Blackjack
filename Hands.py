@@ -14,6 +14,9 @@ class Hand:
         self.played = False
         self.bet = 0
         self.insurance = 0
+        self.surrended = False
+        self.first_choice = True
+        self.split_possible = False
 
     def get_card(self, deck, debug = False, hide = False):
     
@@ -31,8 +34,15 @@ class Hand:
             self.check_blackjack()
             if self.blackjack == True:
                 self.played = True
+            for card in self.hand:
+                card1 = card.value
+                card2 = card.value
+                if card1 == card2:
+                    self.split_possible = True
+
         elif self.value == 21:
             self.played = True
+
         elif self.value > 21:
             self.bust = True
             self.played = True
@@ -44,6 +54,7 @@ class Hand:
             print(self.bust, 'bust')
             print(self.blackjack, 'blackjack')
             print(self.is_21, 'is 21')
+        
 
     def check_blackjack(self):
     
@@ -73,3 +84,5 @@ class Hand:
         self.played = False
         self.bet = 0
         self.insurance = 0
+        self.surrended = False
+        self.first_choice = True
