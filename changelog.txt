@@ -64,6 +64,7 @@ Implemented
 
 v1.0.1
 
+Added insurance
 Changed printing so that the terminal is cleared at each phase of the game instead of printing down forever
 Game now correctly calculates hand value for 2 or more aces in hand
 Game now correctly calculates bet wins or losses

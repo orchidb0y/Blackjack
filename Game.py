@@ -65,7 +65,7 @@ By deafult, the game is be played with 5 decks of 52 cards.''')
     dealing()
 
 
-def dealing(split = False, person = None, i = None, debug_blackjack = True):
+def dealing(split = False, person = None, i = None, debug_blackjack = False):
 
     if split == False:
         for player in players_list:
