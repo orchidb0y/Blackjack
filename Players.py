@@ -1,4 +1,5 @@
 from Hands import Hand
+from time import sleep
 
 class Player:
 
@@ -42,7 +43,10 @@ class Player:
     
     def reward_bet(self, hand):
 
-        if hand.won == True and hand.blackjack == True:
+        if hand.lost == True:
+            pass
+        
+        elif hand.won == True and hand.blackjack == True:
             self.wallet += hand.bet
             self.wallet += hand.bet * 1.5
         
@@ -55,3 +59,14 @@ class Player:
         
         elif hand.won == False and hand.lost == False:
             self.wallet += hand.bet
+
+    def insure(self, hand):
+        
+        hand.insurance = (hand.bet / 2)
+        sleep(1)
+        print(f'You have placed an insurance of {hand.insurance}.')
+        sleep(0.5)
+    
+    def reward_insurace(self, hand):
+
+        self.wallet += (hand.insurance * 2)

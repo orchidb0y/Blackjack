@@ -1,5 +1,5 @@
 from random import randint
-
+from Cards import Card
 
 class Hand:
 
@@ -67,9 +67,11 @@ class Hand:
     
         self.value = 0
         count = self.aces
+
         for card in self.hand:
             if card.value != [1, 11]:
                 self.value += card.value
+
         if count > 0:
             if count == 1 and (self.value + 11 <= 21):
                 self.value += 11
@@ -102,3 +104,14 @@ class Hand:
         self.first_choice = True
         self.won = False
         self.lost = False
+    
+    def debug_blackjack(self):
+
+        ace = Card('Ace', [1, 11], is_ace = True)
+        ten = Card('10', 10)
+
+        self.hand.append(ace)
+        self.hand.append(ten)
+
+        self.blackjack = True
+        self.value = 21

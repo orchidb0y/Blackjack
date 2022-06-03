@@ -65,7 +65,7 @@ By deafult, the game is be played with 5 decks of 52 cards.''')
     dealing()
 
 
-def dealing(split = False, person = None, i = None):
+def dealing(split = False, person = None, i = None, debug_blackjack = True):
 
     if split == False:
         for player in players_list:
@@ -78,9 +78,12 @@ def dealing(split = False, person = None, i = None):
         person.hands[i + 1].get_card(deck)
 
     if split == False:
-        if len(dealer.hands[0].hand) == 0:
-            dealer.hands[0].get_card(deck)
-            dealer.hands[0].get_card(deck, hide = True)
+        if debug_blackjack == False:
+            if len(dealer.hands[0].hand) == 0:
+                dealer.hands[0].get_card(deck)
+                dealer.hands[0].get_card(deck, hide = True)
+        if debug_blackjack == True:
+                dealer.hands[0].debug_blackjack()
 
     if split == True:
         print_dealing(split = True, person = person, i = i)
@@ -216,8 +219,14 @@ def take_turn(player):
                 sleep(0.1)
                 print(card.card)
             print(f'Totalling {hand.value} points.')
+            
+            if hand.first_choice == True and dealer.hands[0].hand[0].value == [1, 11]:
+                insure = input(f'\n{dealer.name} is showing an ace. Would you like to insure your hand? (y/n) ')
+                if insure == 'y':
+                    player.insure(hand)
 
-            opt = input('\n')
+            opt = input('\nPick your choice: ')
+            
             if opt == '1':
 
                 hand.get_card(deck)
@@ -316,6 +325,7 @@ def dealers_turn():
     if dealer.hands[0].blackjack == True:
         sleep(0.5)
         print(f'{dealer.name} has a blackjack!')
+        sleep(2)
 
     hands_number = 0
     bust_hands = 0
@@ -382,6 +392,10 @@ def end_turn(dealer_bust = False):
     elif dealer_bust == False:
         for player in players_list:
             for hand in player.hands:
+
+                if dealer.hands[0].blackjack == True and hand.insurance > 0:
+                    player.reward_insurace(hand)
+                
                 if hand.bust == True:
                     hand.lost = True
                     player.reward_bet(hand)
@@ -420,6 +434,9 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
             for hand in player.hands:
                 sleep(0.5)
                 print(f'{player.name} lost their bet of ${hand.bet} for hand {player.hands.index(hand) + 1}.')
+            
+            if hand.insurance > 0:
+                    print(f'{player.name}\'s hand {player.hands.index(hand) + 1} is insured and will receive ${hand.insurance}.')
         
         sleep(3)
         end_turn()
@@ -428,7 +445,13 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
 
         sleep(0.5)
         print('It\'s a push between all hands and the dealer, since everyone has a blackjack.')
-        
+        sleep(0.5)
+
+        for player in players_list:
+            for hand in player.hands:
+                if hand.insurance > 0:
+                    print(f'{player.name}\'s hand {player.hands.index(hand) + 1} is insured and will receive ${hand.insurance}.')
+
         sleep(3)
         end_turn()
     
@@ -436,6 +459,7 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
 
         for player in players_list:
             for hand in player.hands:
+
                 if hand.surrended == True:
                     sleep(0.5)
                     print(f'{player.name} chose to surrender this hand. They lose half of their original bet.')
@@ -445,6 +469,10 @@ def print_end_turn(players_bust = False, players_blackjack = False, dealer_black
                 else:
                     sleep(0.5)
                     print(f'{player.name}\'s hand {player.hands.index(hand) + 1} lost their bet of ${hand.bet} to the dealer\'s blackjack.')
+                
+                if hand.insurance > 0:
+                    sleep(0.5)
+                    print(f'{player.name}\'s hand {player.hands.index(hand) + 1} is insured and will receive ${hand.insurance}.')
         
         sleep(3)
         end_turn()
