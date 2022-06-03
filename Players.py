@@ -39,3 +39,19 @@ class Player:
         self.wallet += bet / 2
         self.hands[i].bet = 0
         self.hands[i].surrended = True
+    
+    def reward_bet(self, hand):
+
+        if hand.won == True and hand.blackjack == True:
+            self.wallet += hand.bet
+            self.wallet += hand.bet * 1.5
+        
+        elif hand.won == True and hand.blackjack == False:
+            self.wallet += hand.bet
+            self.wallet += hand.bet
+        
+        elif hand.won == False and hand.blackjack == True:
+            self.wallet += hand.bet
+        
+        elif hand.won == False and hand.lost == False:
+            self.wallet += hand.bet

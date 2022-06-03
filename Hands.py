@@ -17,6 +17,8 @@ class Hand:
         self.surrended = False
         self.first_choice = True
         self.split_possible = False
+        self.won = False
+        self.lost = False
 
     def get_card(self, deck, debug = False, hide = False):
     
@@ -69,11 +71,23 @@ class Hand:
             if card.value != [1, 11]:
                 self.value += card.value
         if count > 0:
-            if self.value + (count * 11) > 21:
-                self.value += count
-            else:
+            if count == 1 and (self.value + 11 <= 21):
                 self.value += 11
-    
+            elif count == 1:
+                self.value += 1
+            elif count == 2 and (self.value + 11 <= 21):
+                self.value += 12
+            elif count == 2:
+                self.value += 2
+            elif count == 3 and (self.value + 11 <= 21):
+                self.value += 13
+            elif count == 3:
+                self.value += 3
+            elif count == 4 and (self.value + 11 <= 21):
+                self.value += 14
+            elif count == 4:
+                self.value += 4
+
     def renew_hand(self):
 
         self.hand = []
@@ -86,3 +100,5 @@ class Hand:
         self.insurance = 0
         self.surrended = False
         self.first_choice = True
+        self.won = False
+        self.lost = False

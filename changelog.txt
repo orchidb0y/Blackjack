@@ -62,13 +62,11 @@ Rewrote code in a modular fashion
 New class for cards, decks, hands, players and statistics
 Implemented 
 
+v1.0.1
+
+Changed printing so that the terminal is cleared at each phase of the game instead of printing down forever
+Game now correctly calculates hand value for 2 or more aces in hand
+Game now correctly calculates bet wins or losses
+
 Known issues:
 
-1. Sometimes, Python fails to define a new object for a player or dealer's hand, so their hands end up mixing up with each other's.
-   Worked out some kind of solution for the problem. However, since I'm not sure how it happenend in the first place, it could pop up again.
-
-2. The game is not correctly calculating and adding money to players wallets when they win with a blackjack
-
-Planned for v1.0.1:
-
-1. Fixing reward calculation for blackjacks
