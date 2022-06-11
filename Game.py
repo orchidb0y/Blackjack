@@ -12,19 +12,13 @@ dealer = Player('The dealer', [dealer_hand])
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print('''
-#######    #              #       ##########  #     #    ##########       #       ##########  #     #
-#      #   #             # #      #           #    #              #      # #      #           #    #
-#       #  #             # #      #           #   #               #      # #      #           #   #
-#       #  #            #   #     #           #  #                #     #   #     #           #  #
-#      #   #            #   #     #           # #                 #     #   #     #           # #
-#     #    #           #     #    #           ##                  #    #     #    #           ##
-#      #   #           #######    #           ##                  #    #######    #           ##
-#       #  #          #       #   #           # #         #       #   #       #   #           # #
-#       #  #          #       #   #           #  #        #       #   #       #   #           #  #
-#      #   #         #         #  #           #   #       #       #  #         #  #           #   #
-#######    ########  #         #  ##########  #    #      #########  #         #  ##########  #    #
- 
- ----------------------------------------------------------------------------------------------------
+   ______                             
+  (, /    ) /)       /)   ,        /) 
+    /---(  // _   _ (/_     _   _ (/_ 
+ ) / ____)(/_(_(_(__/(__ /_(_(_(__/(__
+(_/ (                 .-/             
+                     (_/              
+ -------------------------------------
  ''')
 
 def create_player(name):
@@ -530,6 +524,13 @@ def interim():
             player.hands.pop()
         for hand in player.hands:
             hand.renew_hand()
+        if player.wallet <= 0:
+            print(f'{player.name} went broke. They\'re out of the game!')
+            players_list.remove(player)
+    
+    if players_list == []:
+        print('All players are out of the game! Game over.')
+        sys.exit()
 
     dealer_hand.renew_hand()
 

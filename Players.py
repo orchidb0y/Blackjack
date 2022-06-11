@@ -14,7 +14,7 @@ class Player:
     def place_bet(self, bet, i):
     
         bet = int(bet)
-        if self.wallet > bet:
+        if self.wallet >= bet:
             self.hands[i].bet = bet
             self.wallet -= bet
     

@@ -69,5 +69,13 @@ Changed printing so that the terminal is cleared at each phase of the game inste
 Game now correctly calculates hand value for 2 or more aces in hand
 Game now correctly calculates bet wins or losses
 
+v1.0.2
+
+New header
+Game now lets you bet all your money
+If all players are out, game ends
+
 Known issues:
 
+1. Game prints next hand too fast after 'Got a blackjack'
+2. Game sometimes print both cards dealed for dealer as 'Hidden card'
