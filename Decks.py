@@ -16,7 +16,8 @@ class Deck:
                 cards.append(number + suit)
 
         values = ([[1, 11], 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4)
+        deck = []
         for card, value in zip(cards, values):
-            self.deck.append(Card(card, value))
+            deck.append(Card(card, value))
         
-        self.deck = self.deck * number_of_decks
+        self.deck = deck * number_of_decks

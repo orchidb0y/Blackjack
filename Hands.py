@@ -36,11 +36,10 @@ class Hand:
             self.check_blackjack()
             if self.blackjack == True:
                 self.played = True
-            for card in self.hand:
-                card1 = card.value
-                card2 = card.value
-                if card1 == card2:
-                    self.split_possible = True
+            card1 = self.hand[0].value
+            card2 = self.hand[1].value
+            if card1 == card2:
+                self.split_possible = True
 
         elif self.value == 21:
             self.played = True

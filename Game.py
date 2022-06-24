@@ -23,9 +23,23 @@ print('''
 
 def create_player(name):
 
-    Player.player_count += 1
     players_list.append(Player(name, [Hand()]))
-    return players_list
+
+
+def get_bet(player):
+
+    bet = None
+    while bet == 'error' or bet is None:
+        bet = input(f'Enter the bet for {player.name}: ')
+        try:
+            int(bet)
+        except ValueError:
+            print(f'{bet} is not a valid input. Please enter a natural number (e.g. 10)')
+            bet = 'error'
+    
+    return bet
+
+
 
 def start_game():
 
@@ -33,7 +47,6 @@ def start_game():
 The payout for a blackjack is 3:2. The payout for a successful insurance is 2:1.
 Blackjacks by the player are only won if the dealer also doesn\'s show a blackjack.
 By deafult, the game is be played with 5 decks of 52 cards.''')
-    sleep(2.5)
 
     number_of_players = int(input('\nHow many players are we dealing with? '))
 
@@ -41,16 +54,14 @@ By deafult, the game is be played with 5 decks of 52 cards.''')
     count = number_of_players
     while count:
         for number in range(1, number_of_players + 1):
-            sleep(0.5)
             name = input(f'What is the name of player {number}? ')
             create_player(name)
             count -= 1
 
     print()
     for player in players_list:
-        sleep(0.5)
-        bet = input(f'How much does {player.name} want to bet? ')
-        player.place_bet(bet, 0)
+        bet = get_bet(player)
+        player.place_bet(bet)
 
     sleep(1)
     print('\nNow that\'s out of the way, the dealer will deal cards for each player and for himself.')
@@ -91,6 +102,7 @@ def print_dealing(split = False, debug = False, person = None, i = None):
     if split == False:
 
         for player in players_list:
+            sleep(1)
             print(f'\nDealing for {player.name}.\n')
             sleep(1)
             for card in player.hands[0].hand:
@@ -105,7 +117,7 @@ def print_dealing(split = False, debug = False, person = None, i = None):
         sleep(1)
         
         print(f'\nFor hand {i + 1}:')
-        sleep(0.5)
+        sleep(1)
         print(f'{person.hands[i].hand[-1].card}')
         if person.hands[i].blackjack == True:
             print('That\'s a blackjack!')
@@ -113,7 +125,7 @@ def print_dealing(split = False, debug = False, person = None, i = None):
         sleep(1)
 
         print(f'\nFor hand {i + 2}:')
-        sleep(0.5)
+        sleep(1)
         print(f'{person.hands[i + 1].hand[-1].card}')
         if person.hands[i + 1].blackjack == True:
             print('That\'s a blackjack!')
@@ -122,8 +134,9 @@ def print_dealing(split = False, debug = False, person = None, i = None):
 
     if split == False:
 
+        sleep(1)
         print('\nDealing for the dealer.\n')
-        sleep(0.5)
+        sleep(1)
         for card in dealer.hands[0].hand:
             if card.hidden == False:
                 sleep(0.5)
@@ -170,6 +183,7 @@ def print_hit(player, i, hand):
         description += '.'
 
     if player.hands[i].value == 21:
+        sleep(0.5)
         description += '\nScored 21!'
 
     sleep(0.5)
@@ -286,9 +300,11 @@ def take_turn(player):
                     print(f'\nThis can\'t be split. Only hands with two cards of the same value can be split.')
                     sleep(2)
 
+                    take_turn(player)
+
             elif opt == '5' and hand.first_choice == True:
                 
-                player.sur(hand)
+                player.sur()
 
                 sleep(0.5)
                 print(f'{player.name} chose to surrender this hand.')
@@ -526,6 +542,7 @@ def interim():
             hand.renew_hand()
         if player.wallet <= 0:
             print(f'{player.name} went broke. They\'re out of the game!')
+            sleep(1)
             players_list.remove(player)
     
     if players_list == []:
@@ -545,9 +562,8 @@ def new_turn():
     for player in players_list:
         sleep(0.5)
         print(f'\n{player.name} is starting the turn with ${player.wallet} in their wallet.')
-        sleep(1)
         bet = input(f'How much does {player.name} want to bet? ')
-        player.place_bet(bet, 0)
+        player.place_bet(bet)
     
     dealing()
 

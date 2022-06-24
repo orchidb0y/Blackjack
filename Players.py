@@ -11,7 +11,7 @@ class Player:
         self.hands = hands
         self.wallet = 100
 
-    def place_bet(self, bet, i):
+    def place_bet(self, bet, i = 0):
     
         bet = int(bet)
         if self.wallet >= bet:
@@ -33,13 +33,12 @@ class Player:
         self.wallet -= bet
         self.hands[i].bet += bet
     
-    def sur(self, hand):
+    def sur(self):
 
-        i = self.hands.index(hand)
-        bet = self.hands[i].bet
+        bet = self.hands[0].bet
         self.wallet += bet / 2
-        self.hands[i].bet = 0
-        self.hands[i].surrended = True
+        self.hands[0].bet = 0
+        self.hands[0].surrended = True
     
     def reward_bet(self, hand):
 
