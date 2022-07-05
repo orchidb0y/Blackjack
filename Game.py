@@ -364,24 +364,20 @@ def dealers_turn():
         print_end_turn(dealer_blackjack = True)
 
     else:
-        totals = []
-        for player in players_list:
-            for hand in player.hands:
-                if hand.value <= 21:
-                    totals.append(hand.value)
-        goal = max(totals)
         sleep(0.5)
         
-        if dealer.hands[0].value < goal:
-            print(f'They will aim for {goal} points.\n')
+        if dealer.hands[0].value < 17:
+            print(f'They will draw.\n')
             sleep(0.5)
 
         if dealer.hands[0].blackjack != True:
-            while dealer.hands[0].value < goal:
+            while dealer.hands[0].value < 17:
                 dealer.hands[0].get_card(deck)
                 print_hit(dealer, 0, dealer.hands[0])
-                if dealer.hands[0].value < goal:
+                if dealer.hands[0].value < 17:
                     print(f'Totalling {dealer.hands[0].value} so far.')
+                elif dealer.hands[0].value > 21:
+                    print(f'{dealer.name} went bust!')
                 else:
                     print(f'Stopping at {dealer.hands[0].value}.')
                     sleep(1)
